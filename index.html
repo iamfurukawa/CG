@@ -23,6 +23,34 @@
 			}
 		</script>
 		<!--Fim da criação do shader-->
-		
+		<script>
+			var obj;
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
+			camera.position.z = 250;
+			
+			var ambientLight = new THREE.AmbientLight(0xffffff);
+			scene.add(ambientLight);
+			
+			/*Criando o material a partit do shader*/
+			var material = new THREE.ShaderMaterial( {
+				vertexShader: document.getElementById('vertexShader').textContent,
+				fragmentShader: document.getElementById('fragmentShader').textContent,
+			} );
+			
+			var loader = new THREE.OBJLoader();
+			loader.load('models/Going_Merry/GoingMerry.obj', function(object){//Carregando o objeto
+			
+				object.traverse( function ( child ) {
+
+					if ( child instanceof THREE.Mesh ) {
+
+						child.material = material;//aplica o material em cada vertice do objeto
+
+					}
+
+				} );
+			});
+		</script>
 	</body>
 </html>
