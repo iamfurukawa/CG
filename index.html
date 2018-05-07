@@ -21,7 +21,7 @@
         
         <!-- Skybox e Oceano! -->
         <script src="js/Water.js"></script>
-		<script src="js/Sky.js"></script>
+	<script src="js/Sky.js"></script>
         
 	<!-- Vertex Shader Compass! -->
 	<script type="x-shader/x-vertex" id="vertexShaderCompass">
@@ -106,7 +106,7 @@
             });
             
             //Objetos!
-			var boat1, boat2, compass, water, volcano, dragon;
+	    var boat1, boat2, compass, water, volcano, dragon;
             var compassx, compassy, compassz;
             
             //Movimentação!
@@ -199,6 +199,7 @@
                     object.scale.z = 0.03;
                     object.rotation.y = 180 * Math.PI / 180;
                     scene.add( object );
+		    console.log("Going Merry add");
 
                 });
 
@@ -226,6 +227,7 @@
                     object.scale.z = 0.0125;
                     object.rotation.y = 180 * Math.PI / 180;
                     scene.add( object );
+		    console.log("Thousand Sunny add");
 
                 });
 
@@ -242,6 +244,7 @@
 				} );	
 			volcano = object;
                 	scene.add(object);//Adiciona o objeto
+			console.log("Volcano add");
 		});
             
             //Adicionando Dragon na cena!
@@ -254,6 +257,7 @@
 				} );	
 			dragon = object;
 			scene.add(object);//Adiciona o objeto
+			console.log("Dragon add");
 		});
             
             
@@ -276,6 +280,7 @@
 			object.scale.z = 0.1;
 			object.rotation.x = -20 * Math.PI / 180;
 			scene.add(object);//Adiciona o objeto
+			console.log("Compass add");
 		});
             
             //Textura do Oceano!
@@ -300,11 +305,13 @@
             );
             water.rotation.x = - Math.PI / 2;
             scene.add(water);
+	    console.log("Ocean add");
             
             // Skybox
             var sky = new THREE.Sky();
             sky.scale.setScalar( 10000 );
             scene.add( sky );
+	    console.log("Sky add");
 
             var uniforms = sky.material.uniforms;
 
