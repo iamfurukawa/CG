@@ -2,63 +2,208 @@
 <html>
 	<head>
 		<meta charset=utf-8>
-		<title>Just a Boat</title>
-		<style>
-			body { margin: 0; }
-			canvas { width: 100%; height: 100% }
-		</style>
+		<title>Game of Boat</title>
 	</head>
 	<body>
+        <!-- Style Menu! -->
+        <link rel="stylesheet" type="text/css" href="css/menu.css"/> 
+        
+        <!-- Three.js! -->
 		<script src="js/three.js"></script>
+        
+        <!-- Leitores de objetos 3D! -->
 		<script src="js/OBJLoader.js"></script>
-		<!--Inicio da criação do shader-->
-		<script type="x-shader/x-vertex" id="vertexShader">
+        <script src="js/MTLLoader.js"></script>
+        <script src="js/DDSLoader.js"></script>
+        
+        <!-- JQuery! -->
+        <script src="js/jquery-3.3.1.min.js" type="text/javascript"></script>
+        
+        <!-- Skybox e Oceano! -->
+        <script src="js/Water.js"></script>
+		<script src="js/Sky.js"></script>
+        
+		<!-- Vertex Shader Compass! -->
+		<script type="x-shader/x-vertex" id="vertexShaderCompass">
 			void main(){
-				gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+				gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
 			}
 		</script>
-		<script type="x-shader/x-fragment" id="fragmentShader">
+        
+        <!-- Fragment Shader Compass! -->
+		<script type="x-shader/x-fragment" id="fragmentShaderCompass">
 			void main(){
-				gl_FragColor = vec4(0.5, 0.0, 1.0, 1.0);
+				gl_FragColor = vec4(0, 0, 0, 1.0);
 			}
 		</script>
-		<!--Fim da criação do shader-->
+        
+        <!-- Vertex Shader Volcano! -->
+		<script type="x-shader/x-vertex" id="vertexShaderVolcano">
+            uniform mat4 scale;
+            uniform mat4 translation;
+
+            void main() {
+                vec4 mvPosition = viewMatrix * translation * scale * vec4(position, 1.0);
+				gl_Position = projectionMatrix * mvPosition;
+            }
+		</script>
+        
+        <!-- Fragment Shader Volcano! -->
+		<script type="x-shader/x-fragment" id="fragmentShaderVolcano">
+			void main(){
+				gl_FragColor = vec4(0, 0, 0, 1.0);
+			}
+		</script>
+        
+        <!-- Vertex Shader Dragon! -->
+		<script type="x-shader/x-vertex" id="vertexShaderDragon">
+            uniform mat4 scale;
+            uniform mat4 translation;
+
+            void main() {
+                vec4 mvPosition = viewMatrix * translation * scale * vec4(position, 1.0);
+				gl_Position = projectionMatrix * mvPosition;
+            }
+		</script>
+        
+        <!-- Fragment Shader Dragon! -->
+		<script type="x-shader/x-fragment" id="fragmentShaderDragon">
+			void main(){
+				gl_FragColor = vec4(0, 0, 0, 1.0);
+			}
+		</script>
+        
+        <!-- Menu Inicial! -->
+       
+        <div class="panel">
+            <div class="menu">
+                <h1>Bem vindo ao Game of Boat!</h1>
+                <h3>
+                    The game is coming!
+                </h3>
+                <button type="button" id="initGame">Começar!</button>
+            </div>
+        </div>
+        
 		<script>
-			var obj;
+            //Inicia as animações!
+            paused = 0;
+            
+            //Seta valores para audio de fundo!
+            var song = document.createElement('audio');
+            song.setAttribute('src', 'songs/GOTMainTheme.mp3');
+            $.get();
+            
+            //Apaga o Menu e inicia o jogo!
+            $('#initGame').click(function(){
+                paused = 1;
+                $('.panel').remove();
+                
+                //more information about audio: https://www.youtube.com/watch?v=gNUm_uNMLcc
+                console.log("Tocando Intro");
+                //song.play();    
+                song.loop = true;
+            });
+            
+            //Objetos!
+			var boat1, boat2, compass, water, volcano, dragon;
+            var compassx, compassy, compassz;
+            
+            //Movimentação!
+            var keyboard = {};
+            var player = { height:1.8, speed:5, turnSpeed:Math.PI*0.02 };
+            
+            //Criando renderizador e setando configurações de tela
+            var renderer = new THREE.WebGLRenderer();
+			renderer.setSize(window.innerWidth, window.innerHeight);//Seta o tamanho da tela
+			renderer.setPixelRatio(window.devicePixelRatio);//Evita borrões devido a proporção de pixels
+			document.body.appendChild(renderer.domElement);//Adiciona na tela a cena
+            
+            //Adicionando luz ambiente e cor de fundo na cena!
 			var scene = new THREE.Scene();
-			var camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
-			camera.position.z = 250;
-			
-			var ambientLight = new THREE.AmbientLight(0xffffff);
-			scene.add(ambientLight);
-			
-			/*Criando o material a partit do shader*/
-			var material = new THREE.ShaderMaterial( {
-				vertexShader: document.getElementById('vertexShader').textContent,
-				fragmentShader: document.getElementById('fragmentShader').textContent,
-			} );
-			
-			var loader = new THREE.OBJLoader();
-			loader.load('models/Going_Merry/GoingMerry.obj', function(object){//Carregando o objeto
-			
-				object.traverse( function ( child ) {
-
-					if ( child instanceof THREE.Mesh ) {
-
-						child.material = material;//aplica o material em cada vertice do objeto
-
-					}
-
-				} );
-				
-				obj = object;
-				object.position.x = 0;
-               			object.position.y = -50;
-                		object.scale.x = 0.05;
-                		object.scale.y = 0.05;
-                		object.scale.z = 0.05;
-				scene.add(object);//Adiciona o objeto
+            scene.add(new THREE.AmbientLight(0xffffff));
+            scene.background = new THREE.Color(0xf0f0f0);
+            
+			var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+            //Posicionando camera em terceira pessoa!
+			camera.position.z = 200;
+            camera.position.y = 170;
+            camera.rotation.x = -20 * Math.PI / 180;
+            compassx = -60;
+            compassy = -70;
+            compassz = -100;
+		
+            
+            uniforms = {
+				scale: {value: new THREE.Matrix4().set(150, 0, 0, 0,
+                                                       0, 150, 0, 0,
+                                                       0, 0, 150, 0,
+                                                       0, 0, 0, 1)},
+                translation: {value: new THREE.Matrix4().set(1, 0, 0, 150,
+                                                             0, 1, 0, 45,
+                                                             0, 0, 1, -500,
+                                                             0, 0, 0, 1)}
+            };
+            
+            uniforms2 = {
+				scale: {value: new THREE.Matrix4().set(150, 0, 0, 0,
+                                                       0, 150, 0, 0,
+                                                       0, 0, 150, 0,
+                                                       0, 0, 0, 1)},
+                
+                translation: {value: new THREE.Matrix4().set(1, 0, 0, 150,
+                                                             0, 1, 0, -100,
+                                                             0, 0, 1, -400,
+                                                             0, 0, 0, 1)}
+            };
+            
+			/*Criando o material a partir do shader*/
+			var materialCompass = new THREE.ShaderMaterial( {
+				vertexShader: document.getElementById('vertexShaderCompass').textContent,
+				fragmentShader: document.getElementById('fragmentShaderCompass').textContent,
 			});
+            
+            var materialDragon = new THREE.ShaderMaterial( {
+                uniforms: uniforms2,
+				vertexShader: document.getElementById('vertexShaderDragon').textContent,
+				fragmentShader: document.getElementById('fragmentShaderDragon').textContent,
+			});
+            
+            var materialVolcano = new THREE.ShaderMaterial( {
+                uniforms: uniforms,
+				vertexShader: document.getElementById('vertexShaderVolcano').textContent,
+				fragmentShader: document.getElementById('fragmentShaderVolcano').textContent,
+			});
+			
+            
+            THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader());
+            var mtlLoader = new THREE.MTLLoader();
+            
+            //Adicionando o Barco 1 na cena!
+            mtlLoader.setPath( 'models/Going_Merry/' );
+            mtlLoader.load( 'GoingMerry.mtl', function( materials ) {
+
+                materials.preload();
+
+                var objLoader = new THREE.OBJLoader();
+                objLoader.setMaterials( materials );
+                objLoader.setPath( 'models/Going_Merry/' );
+                objLoader.load( 'GoingMerry.obj', function ( object ) {
+                    
+                    boat1 = object;
+                    object.position.y = 6;
+                    object.position.x = 0;
+                    object.position.z = -25;
+                    object.scale.x = 0.03;
+                    object.scale.y = 0.03;
+                    object.scale.z = 0.03;
+                    object.rotation.y = 180 * Math.PI / 180;
+                    scene.add( object );
+
+                });
+
+            });
+            
 			
 			var renderer = new THREE.WebGLRenderer();
 			renderer.setSize( window.innerWidth, window.innerHeight );
