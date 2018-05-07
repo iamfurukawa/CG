@@ -205,16 +205,140 @@
             });
             
 			
-			var renderer = new THREE.WebGLRenderer();
-			renderer.setSize( window.innerWidth, window.innerHeight );
-			renderer.setPixelRatio(window.devicePixelRatio);
-			document.body.appendChild( renderer.domElement );
-			function animate() {
-				requestAnimationFrame( animate );
-				obj.rotation.y += 0.05;//Roda o objeto no eixo y a cada frame
-				renderer.render( scene, camera );
-			}
-			animate();
-		</script>
-	</body>
-</html>
+			
+            //Adicionando o Barco 2 na cena!
+            var mtlLoader2 = new THREE.MTLLoader();
+            mtlLoader2.setPath('models/Thousand_Sunny/');
+            mtlLoader2.load('sunny.mtl', function(materials) {
+                materials.preload();
+
+                var objLoader = new THREE.OBJLoader();
+                objLoader.setMaterials( materials );
+                objLoader.setPath( 'models/Thousand_Sunny/' );
+                objLoader.load( 'sunny.obj', function ( object ) {
+                    
+                    boat2 = object;
+                    object.position.y = 10;
+                    object.position.x = -100;
+                    object.position.z = -300;
+                    object.scale.x = 0.0125;
+                    object.scale.y = 0.0125;
+                    object.scale.z = 0.0125;
+                    object.rotation.y = 180 * Math.PI / 180;
+                    scene.add( object );
+
+                });
+
+            });
+            
+            
+            //Adicionando Volcano na cena!
+            var loader = new THREE.OBJLoader();
+			loader.load('models/Volcano/volcano.obj', function(object){//Carregando o objeto
+				object.traverse(function (child) {
+					if ( child instanceof THREE.Mesh) {
+						child.material = materialVolcano;//aplica o material em cada vertice do objeto
+					}
+				} );	
+			volcano = object;
+                	scene.add(object);//Adiciona o objeto
+		});
+            
+            //Adicionando Dragon na cena!
+            var loader = new THREE.OBJLoader();
+			loader.load('models/Dragon/Dargon_posing.obj', function(object){//Carregando o objeto
+				object.traverse(function (child) {
+					if ( child instanceof THREE.Mesh) {
+						child.material = materialDragon;//aplica o material em cada vertice do objeto
+					}
+				} );	
+			dragon = object;
+			scene.add(object);//Adiciona o objeto
+		});
+            
+            
+            //Adicionando Bussola na cena!
+            var loader = new THREE.OBJLoader();
+		loader.load('models/Compass/compass.obj', function(object){//Carregando o objeto
+			
+			object.traverse(function (child) {
+				if ( child instanceof THREE.Mesh) {
+					child.material = materialCompass;//aplica o material em cada vertice do objeto
+				}
+			} );
+
+			compass = object;
+			object.position.x = camera.position.x-60;
+			object.position.y = camera.position.y-70;
+			object.position.z = camera.position.z-100;
+			object.scale.x = 0.1;
+			object.scale.y = 0.1;
+			object.scale.z = 0.1;
+			object.rotation.x = -20 * Math.PI / 180;
+			scene.add(object);//Adiciona o objeto
+		});
+            
+            //Textura do Oceano!
+            light = new THREE.DirectionalLight( 0xffffff, 0.8 );
+            scene.add( light );
+            var waterGeometry = new THREE.PlaneBufferGeometry(10000, 10000);
+            water = new THREE.Water(
+                waterGeometry,
+                {
+                    textureWidth: 512,
+                    textureHeight: 512,
+                    waterNormals: new THREE.TextureLoader().load('texture/waternormals.jpg', function ( texture ) {
+                        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+                    }),
+                    alpha: 1.0,
+                    sunDirection: light.position.clone().normalize(),
+                    sunColor: 0xffffff,
+                    waterColor: 0x001e0f,
+                    distortionScale:  3.7,
+                    fog: scene.fog !== undefined
+                }
+            );
+            water.rotation.x = - Math.PI / 2;
+            scene.add(water);
+            
+            // Skybox
+            var sky = new THREE.Sky();
+            sky.scale.setScalar( 10000 );
+            scene.add( sky );
+
+            var uniforms = sky.material.uniforms;
+
+            uniforms.turbidity.value = 10;
+            uniforms.rayleigh.value = 2;
+            uniforms.luminance.value = 1;
+            uniforms.mieCoefficient.value = 0.005;
+            uniforms.mieDirectionalG.value = 0.8;
+
+            var parameters = {
+                distance: 400,
+                inclination: 0.5,
+                azimuth: 0.203
+            };
+
+            var cubeCamera = new THREE.CubeCamera(1, 20000, 256);
+            cubeCamera.renderTarget.texture.minFilter = THREE.LinearMipMapLinearFilter;
+
+            function updateSun() {
+
+                var theta = Math.PI * ( parameters.inclination - 0.5);
+                var phi = 2 * Math.PI * ( parameters.azimuth - 0.403);
+
+                light.position.x = parameters.distance * Math.cos( phi );
+                light.position.y = parameters.distance * Math.sin( phi ) * Math.sin( theta );
+                light.position.z = parameters.distance * Math.sin( phi ) * Math.cos( theta );
+
+                sky.material.uniforms.sunPosition.value = light.position.copy( light.position );
+                water.material.uniforms.sunDirection.value.copy( light.position ).normalize();
+
+                cubeCamera.update(renderer, scene);
+
+            }
+            updateSun();
+            
+            //Deixar responsivo!
+            window.addEventListener( 'resize', onWindowResize, false );
