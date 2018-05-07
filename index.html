@@ -9,10 +9,10 @@
         <link rel="stylesheet" type="text/css" href="css/menu.css"/> 
         
         <!-- Three.js! -->
-		<script src="js/three.js"></script>
+	<script src="js/three.js"></script>
         
         <!-- Leitores de objetos 3D! -->
-		<script src="js/OBJLoader.js"></script>
+	<script src="js/OBJLoader.js"></script>
         <script src="js/MTLLoader.js"></script>
         <script src="js/DDSLoader.js"></script>
         
@@ -23,22 +23,22 @@
         <script src="js/Water.js"></script>
 		<script src="js/Sky.js"></script>
         
-		<!-- Vertex Shader Compass! -->
-		<script type="x-shader/x-vertex" id="vertexShaderCompass">
-			void main(){
-				gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
-			}
-		</script>
+	<!-- Vertex Shader Compass! -->
+	<script type="x-shader/x-vertex" id="vertexShaderCompass">
+		void main(){
+			gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+		}
+	</script>
         
         <!-- Fragment Shader Compass! -->
-		<script type="x-shader/x-fragment" id="fragmentShaderCompass">
-			void main(){
-				gl_FragColor = vec4(0, 0, 0, 1.0);
-			}
-		</script>
+	<script type="x-shader/x-fragment" id="fragmentShaderCompass">
+		void main(){
+			gl_FragColor = vec4(0, 0, 0, 1.0);
+		}
+	</script>
         
         <!-- Vertex Shader Volcano! -->
-		<script type="x-shader/x-vertex" id="vertexShaderVolcano">
+	<script type="x-shader/x-vertex" id="vertexShaderVolcano">
             uniform mat4 scale;
             uniform mat4 translation;
 
@@ -46,17 +46,17 @@
                 vec4 mvPosition = viewMatrix * translation * scale * vec4(position, 1.0);
 				gl_Position = projectionMatrix * mvPosition;
             }
-		</script>
+	</script>
         
         <!-- Fragment Shader Volcano! -->
-		<script type="x-shader/x-fragment" id="fragmentShaderVolcano">
-			void main(){
-				gl_FragColor = vec4(0, 0, 0, 1.0);
-			}
-		</script>
+	<script type="x-shader/x-fragment" id="fragmentShaderVolcano">
+		void main(){
+			gl_FragColor = vec4(0, 0, 0, 1.0);
+		}
+	</script>
         
         <!-- Vertex Shader Dragon! -->
-		<script type="x-shader/x-vertex" id="vertexShaderDragon">
+	<script type="x-shader/x-vertex" id="vertexShaderDragon">
             uniform mat4 scale;
             uniform mat4 translation;
 
@@ -64,14 +64,14 @@
                 vec4 mvPosition = viewMatrix * translation * scale * vec4(position, 1.0);
 				gl_Position = projectionMatrix * mvPosition;
             }
-		</script>
+	</script>
         
         <!-- Fragment Shader Dragon! -->
-		<script type="x-shader/x-fragment" id="fragmentShaderDragon">
-			void main(){
-				gl_FragColor = vec4(0, 0, 0, 1.0);
-			}
-		</script>
+	<script type="x-shader/x-fragment" id="fragmentShaderDragon">
+		void main(){
+			gl_FragColor = vec4(0, 0, 0, 1.0);
+		}
+	</script>
         
         <!-- Menu Inicial! -->
        
@@ -85,7 +85,7 @@
             </div>
         </div>
         
-		<script>
+	<script>
             //Inicia as animações!
             paused = 0;
             
@@ -101,7 +101,7 @@
                 
                 //more information about audio: https://www.youtube.com/watch?v=gNUm_uNMLcc
                 console.log("Tocando Intro");
-                //song.play();    
+                song.play();    
                 song.loop = true;
             });
             
@@ -120,13 +120,13 @@
 			document.body.appendChild(renderer.domElement);//Adiciona na tela a cena
             
             //Adicionando luz ambiente e cor de fundo na cena!
-			var scene = new THREE.Scene();
+	    var scene = new THREE.Scene();
             scene.add(new THREE.AmbientLight(0xffffff));
             scene.background = new THREE.Color(0xf0f0f0);
             
-			var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+	    var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
             //Posicionando camera em terceira pessoa!
-			camera.position.z = 200;
+	    camera.position.z = 200;
             camera.position.y = 170;
             camera.rotation.x = -20 * Math.PI / 180;
             compassx = -60;
@@ -135,7 +135,7 @@
 		
             
             uniforms = {
-				scale: {value: new THREE.Matrix4().set(150, 0, 0, 0,
+		scale: {value: new THREE.Matrix4().set(150, 0, 0, 0,
                                                        0, 150, 0, 0,
                                                        0, 0, 150, 0,
                                                        0, 0, 0, 1)},
@@ -146,7 +146,7 @@
             };
             
             uniforms2 = {
-				scale: {value: new THREE.Matrix4().set(150, 0, 0, 0,
+		scale: {value: new THREE.Matrix4().set(150, 0, 0, 0,
                                                        0, 150, 0, 0,
                                                        0, 0, 150, 0,
                                                        0, 0, 0, 1)},
@@ -157,23 +157,23 @@
                                                              0, 0, 0, 1)}
             };
             
-			/*Criando o material a partir do shader*/
-			var materialCompass = new THREE.ShaderMaterial( {
-				vertexShader: document.getElementById('vertexShaderCompass').textContent,
-				fragmentShader: document.getElementById('fragmentShaderCompass').textContent,
-			});
+		/*Criando o material a partir do shader*/
+		var materialCompass = new THREE.ShaderMaterial( {
+			vertexShader: document.getElementById('vertexShaderCompass').textContent,
+			fragmentShader: document.getElementById('fragmentShaderCompass').textContent,
+		});
             
             var materialDragon = new THREE.ShaderMaterial( {
                 uniforms: uniforms2,
 				vertexShader: document.getElementById('vertexShaderDragon').textContent,
 				fragmentShader: document.getElementById('fragmentShaderDragon').textContent,
-			});
+	    });
             
             var materialVolcano = new THREE.ShaderMaterial( {
                 uniforms: uniforms,
 				vertexShader: document.getElementById('vertexShaderVolcano').textContent,
 				fragmentShader: document.getElementById('fragmentShaderVolcano').textContent,
-			});
+	    });
 			
             
             THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader());
@@ -342,3 +342,151 @@
             
             //Deixar responsivo!
             window.addEventListener( 'resize', onWindowResize, false );
+	    function onWindowResize() {
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+		renderer.setSize( window.innerWidth, window.innerHeight );
+	     }
+            
+            //Animar!
+	    function animate() {
+		requestAnimationFrame(animate);
+		render();
+	    }
+            
+            //Renderizar!
+            function render() {
+
+		var time = performance.now() * 0.001;
+                var pos = camera.position;
+                
+                compass.rotation.z = Math.atan2(boat1.position.x - boat2.position.x, boat1.position.z - boat2.position.z);
+                //console.log(volcano.position.x +", "+ volcano.position.y +", "+ volcano.position.z);
+                
+                //Movimentação:
+                //https://www.youtube.com/watch?v=UUilwGxIj_Q 
+                
+                // Keyboard movement inputs
+                if(keyboard[83]){ // S key
+                    camera.position.x -= Math.sin(camera.rotation.y) * player.speed;
+                    camera.position.z -= -Math.cos(camera.rotation.y) * player.speed;
+                    
+                    boat1.position.x -= Math.sin(camera.rotation.y) * player.speed;
+                    boat1.position.z -= -Math.cos(camera.rotation.y) * player.speed;
+                    
+                    compass.position.x = pos.x + compassx;
+                    compass.position.y = pos.y + compassy;
+                    compass.position.z = pos.z + compassz;
+                    
+                }
+                if(keyboard[87]){ // W key
+                    camera.position.x += Math.sin(camera.rotation.y) * player.speed;
+                    camera.position.z += -Math.cos(camera.rotation.y) * player.speed;
+                    
+                    boat1.position.x += Math.sin(camera.rotation.y) * player.speed;
+                    boat1.position.z += -Math.cos(camera.rotation.y) * player.speed;
+                    
+                    compass.position.x = pos.x + compassx;
+                    compass.position.y = pos.y + compassy;
+                    compass.position.z = pos.z + compassz;
+                                        
+                }
+                if(keyboard[68]){ // D key
+                    // Redirect motion by 90 degrees
+                    camera.position.x += Math.sin(camera.rotation.y + Math.PI/2) * player.speed;
+                    camera.position.z += -Math.cos(camera.rotation.y + Math.PI/2) * player.speed;
+                    
+                    boat1.position.x += Math.sin(camera.rotation.y + Math.PI/2) * player.speed;
+                    boat1.position.z += -Math.cos(camera.rotation.y + Math.PI/2) * player.speed;
+                    
+                    compass.position.x = pos.x + compassx;
+                    compass.position.y = pos.y + compassy;
+                    compass.position.z = pos.z + compassz;
+                    
+                }
+                if(keyboard[65]){ // A key
+                    camera.position.x += Math.sin(camera.rotation.y - Math.PI/2) * player.speed;
+                    camera.position.z += -Math.cos(camera.rotation.y - Math.PI/2) * player.speed;
+                    
+                    boat1.position.x += Math.sin(camera.rotation.y - Math.PI/2) * player.speed;
+                    boat1.position.z += -Math.cos(camera.rotation.y - Math.PI/2) * player.speed;
+                    
+                    compass.position.x = pos.x + compassx;
+                    compass.position.y = pos.y + compassy;
+                    compass.position.z = pos.z + compassz;
+                                        
+                }
+                
+                if(keyboard[49]){ // 1 key
+                    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+                    //Posicionando camera em terceira pessoa!
+
+                    camera.position.x = boat1.position.x;
+                    camera.position.y = boat1.position.y + 170;
+                    camera.position.z = boat1.position.z + 230;   
+                    //170
+                    camera.rotation.x = -20 * Math.PI / 180;
+                    
+                    compass.rotation.x = -20 * Math.PI / 180;
+                    compass.position.z = camera.position.z - 100;
+                    compass.position.y = camera.position.y - 70;
+                    compass.position.x = camera.position.x - 60;
+                    compassx = -60;
+                    compassy = -70;
+                    compassz = -100;
+                }
+                
+                if(keyboard[50]){ // 2 key
+                    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+                    //Posicionando camera para cima!
+                    
+                    camera.position.z = boat1.position.z;
+                    camera.position.y = boat1.position.y + 500;
+                    camera.position.x = boat1.position.x;
+                    camera.rotation.x = -90 * Math.PI / 180;
+                    
+                    compass.rotation.x = -90 * Math.PI / 180;
+                    
+                    compass.position.z = camera.position.z + 30;
+                    compass.position.y = camera.position.y - 100;
+                    compass.position.x = camera.position.x - 70;
+                    
+                    compassx = -70;
+                    compassy = -100;
+                    compassz = +30;
+                }
+                
+                /*
+                Provavelmente não vamos usar isso, mas é legal pra entender um pouco mais!
+                // Keyboard turn inputs
+                if(keyboard[37]){ // left arrow key
+                    camera.rotation.y -= player.turnSpeed;
+                }
+                if(keyboard[39]){ // right arrow key
+                    camera.rotation.y += player.turnSpeed;
+                }
+                */
+				water.material.uniforms.time.value += 1.0 / 60.0;
+                
+                if(paused == 1){
+                    //boat2.rotation.y += 0.031;
+                    //boat2.rotation.z += 0.03;
+                }
+                renderer.render( scene, camera );
+	    }
+            
+            function keyDown(event){
+                keyboard[event.keyCode] = true;
+            }
+
+            function keyUp(event){
+                keyboard[event.keyCode] = false;
+            }
+
+            window.addEventListener('keydown', keyDown);
+            window.addEventListener('keyup', keyUp);
+
+	    animate();
+		</script>
+	</body>
+</html>
