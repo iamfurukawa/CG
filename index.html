@@ -363,7 +363,21 @@
 			    new THREE.CubicBezierCurve3(controlPoints[3],controlPoints[2],controlPoints[1],controlPoints[0])
 			];
 			
-			//RESTO DO CÓDIGO DA CURVA AQUI
+			//Pega o instante da curva!
+                	var t = curves[curve_idx].getUtoTmapping(curve_c / 100);
+                
+			//Movimenta o obj na curva!
+			boat2.position.set(curves[curve_idx].getPointAt(t).x, curves[curve_idx].getPointAt(t).y, curves[curve_idx].getPointAt(t).z);
+                
+			//Faz o obj ser direcionado na curva!
+			boat2.lookAt(curves[curve_idx].getPointAt(curves[curve_idx].getUtoTmapping((curve_c+boat2_speed) / 100))); 
+                
+			//Realiza a variação de movimento na curva!
+			curve_c += boat2_speed;
+			if (curve_c > 100) {
+			    curve_idx = (curve_idx + 1) % 6;
+			    curve_c = 0;
+    			}
 			
 			//Faz com que o norte da bussola fique fixo no boat2
 			compass.rotation.z = Math.atan2(boat1.position.x - boat2.position.x, boat1.position.z - boat2.position.z);
