@@ -338,8 +338,33 @@
 			var time = performance.now() * 0.001;
 			var pos = camera.position;
 
-			//COLOCAR AQUI A CURVA!
+			//Pontos de controle da curva!
+			controlPoints = [
+						new THREE.Vector3(-100,10,-300), 
+			    new THREE.Vector3(1100,10,-300), 
+			    new THREE.Vector3(1100,10,1300), 
+			    new THREE.Vector3(-100,10,1300),
+			    new THREE.Vector3(5000,10,1300), 
+			    new THREE.Vector3(5000,10,3000), 
+			    new THREE.Vector3(-100,10,3000), 
+			    new THREE.Vector3(1100,10,3000), 
+						new THREE.Vector3(1100,10,4000), 
+			    new THREE.Vector3(-100,10,4000)
+					];
 
+			//Definição da curva!
+			curves = [
+			    new THREE.CubicBezierCurve3(controlPoints[0],controlPoints[1],controlPoints[2],controlPoints[3]),
+			    new THREE.CubicBezierCurve3(controlPoints[3],controlPoints[4],controlPoints[5],controlPoints[6]),
+			    new THREE.CubicBezierCurve3(controlPoints[6],controlPoints[7],controlPoints[8],controlPoints[9]),
+
+			    new THREE.CubicBezierCurve3(controlPoints[9],controlPoints[8],controlPoints[7],controlPoints[6]),
+			    new THREE.CubicBezierCurve3(controlPoints[6],controlPoints[5],controlPoints[4],controlPoints[3]),
+			    new THREE.CubicBezierCurve3(controlPoints[3],controlPoints[2],controlPoints[1],controlPoints[0])
+			];
+			
+			//RESTO DO CÓDIGO DA CURVA AQUI
+			
 			//Faz com que o norte da bussola fique fixo no boat2
 			compass.rotation.z = Math.atan2(boat1.position.x - boat2.position.x, boat1.position.z - boat2.position.z);
 
