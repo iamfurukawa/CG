@@ -492,3 +492,225 @@
                     boat1.rotation.y = -135 * Math.PI / 180;                       
                 }
                 
+ 		// Keyboard movement inputs
+                if(keyboard[83] && setMove){ // S key
+                    camera.position.x -= Math.sin(camera.rotation.y) * player.speed;
+                    camera.position.z -= -Math.cos(camera.rotation.y) * player.speed;
+                    
+                    boat1.position.x -= Math.sin(camera.rotation.y) * player.speed;
+                    boat1.position.z -= -Math.cos(camera.rotation.y) * player.speed;
+                    
+                    compass.position.x = pos.x + compassx;
+                    compass.position.y = pos.y + compassy;
+                    compass.position.z = pos.z + compassz;
+                    
+                }
+                if(keyboard[87] && setMove){ // W key
+                    camera.position.x += Math.sin(camera.rotation.y) * player.speed;
+                    camera.position.z += -Math.cos(camera.rotation.y) * player.speed;
+                    
+                    boat1.position.x += Math.sin(camera.rotation.y) * player.speed;
+                    boat1.position.z += -Math.cos(camera.rotation.y) * player.speed;
+                    
+                    compass.position.x = pos.x + compassx;
+                    compass.position.y = pos.y + compassy;
+                    compass.position.z = pos.z + compassz;
+                                        
+                }
+                if(keyboard[68] && setMove){ // D key
+                    // Redirect motion by 90 degrees
+                    camera.position.x += Math.sin(camera.rotation.y + Math.PI/2) * player.speed;
+                    camera.position.z += -Math.cos(camera.rotation.y + Math.PI/2) * player.speed;
+                    
+                    boat1.position.x += Math.sin(camera.rotation.y + Math.PI/2) * player.speed;
+                    boat1.position.z += -Math.cos(camera.rotation.y + Math.PI/2) * player.speed;
+                    
+                    compass.position.x = pos.x + compassx;
+                    compass.position.y = pos.y + compassy;
+                    compass.position.z = pos.z + compassz;
+                    
+                }
+                
+                if(keyboard[65] && setMove){ // A key
+                    camera.position.x += Math.sin(camera.rotation.y - Math.PI/2) * player.speed;
+                    camera.position.z += -Math.cos(camera.rotation.y - Math.PI/2) * player.speed;
+                    
+                    boat1.position.x += Math.sin(camera.rotation.y - Math.PI/2) * player.speed;
+                    boat1.position.z += -Math.cos(camera.rotation.y - Math.PI/2) * player.speed;
+                    
+                    compass.position.x = pos.x + compassx;
+                    compass.position.y = pos.y + compassy;
+                    compass.position.z = pos.z + compassz;
+                                        
+                }
+        
+                //Cameras!
+                if(keyboard[49] && setMove){ // 1 key
+                    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 5000);
+                    //Posicionando camera em terceira pessoa!
+
+                    camera.position.x = boat1.position.x;
+                    camera.position.y = boat1.position.y + 170;
+                    camera.position.z = boat1.position.z + 230;   
+                    camera.rotation.x = -20 * Math.PI / 180;
+                    
+                    compass.rotation.x = -20 * Math.PI / 180;
+                    compass.position.z = camera.position.z - 100;
+                    compass.position.y = camera.position.y - 70;
+                    compass.position.x = camera.position.x - 60;
+                    compassx = -60;
+                    compassy = -70;
+                    compassz = -100;
+                    
+                    setMove = true;
+                    
+                }
+                
+                if(keyboard[50] && setMove){ // 2 key
+                    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+                    //Posicionando camera para cima!
+                    
+                    camera.position.z = boat1.position.z;
+                    camera.position.y = boat1.position.y + 500;
+                    camera.position.x = boat1.position.x;
+                    camera.rotation.x = -90 * Math.PI / 180;
+                    
+                    compass.rotation.x = -90 * Math.PI / 180;
+                    
+                    compass.position.z = camera.position.z + 30;
+                    compass.position.y = camera.position.y - 100;
+                    compass.position.x = camera.position.x - 70;
+                    
+                    compassx = -70;
+                    compassy = -100;
+                    compassz = +30;
+                    
+                    setMove = true;
+                    
+                }
+                
+                if(keyboard[48]){ // 0 key
+                    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000000);
+                    //Posicionando camera para animação!
+                    
+                    camera.position.z = 100000;
+                    camera.position.y = 200;
+                    camera.position.x = 100000;
+                    camera.rotation.x = -20 * Math.PI / 180;
+                    setMove = false;
+                    
+                    $("#scoreboard").css("display","none");
+                    $("#panel").css("display","none");
+                    
+                    music(3);
+                    
+                }
+                
+				water.material.uniforms.time.value += 1.0 / 60.0;
+                
+                if(paused == 1){
+                    //Inicializa pontuação, timer e despausa o jogo
+                    player.points = 0;
+                    setPoint(player.points);
+                    
+                    timerCount();
+                    paused = 0;
+                    setMove = true;
+                    music(0);
+                }
+                
+                renderer.render( scene, camera );
+			}
+            
+            function keyDown(event){
+                keyboard[event.keyCode] = true;
+            }
+
+            function keyUp(event){
+                keyboard[event.keyCode] = false;
+            }
+            
+            function win(){
+                setTimeout("location.reload();", 6000);
+                boat1.position.x = 999999;
+                $("#win").css("display","block");
+                music(1);
+            }
+            
+            function lose(){
+                setTimeout("location.reload();", 5000);
+                boat1.position.x = 999999;
+                $("#lose").css("display","block");
+                music(2);
+            }
+            
+            function setPoint(point){
+                document.getElementById("points").innerHTML = "Pontuação: " + point;
+            }
+            
+            function endGame(){
+                
+                if(player.points >= 10){
+                    win();
+                } else {
+                    lose();
+                }
+                
+            }
+            
+            function timerCount(){
+                // Set the date we're counting down to
+                var countDownDate = new Date().getTime() + 61000;
+
+                // Update the count down every 1 second
+                var x = setInterval(function() {
+
+                  // Get todays date and time
+                  var now = new Date().getTime();
+
+                  // Find the distance between now and the count down date
+                  var distance = countDownDate - now;
+
+                  // Time calculations for days, hours, minutes and seconds
+                  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                  // Display the result in the element with id="demo"
+                  document.getElementById("time").innerHTML = "Tempo restante: " + minutes + "m " + seconds + "s ";
+
+                  // If the count down is finished, write some text 
+                  if (distance < 0) {
+                    clearInterval(x);
+                        if(setMove){
+                            endGame();
+                        }
+                  }
+                }, 1000);
+            }
+            
+            function music(idx){
+                song.pause();
+                
+                if(idx == 0){
+                    song.setAttribute('src', 'songs/GOTMainTheme.mp3');
+                } else if(idx == 1){
+                    song.setAttribute('src', 'songs/mario.mp3');
+                } else if(idx == 2){
+                    song.setAttribute('src', 'songs/titanicFluteFail.mp3');
+                } else if(idx == 3){
+                    song.setAttribute('src', 'songs/shrekSong.mp3');
+                }
+                
+                song.loop = true;
+                song.play();
+            }
+
+            window.addEventListener('keydown', keyDown);
+            window.addEventListener('keyup', keyUp);
+            
+			animate();
+		</script>
+	</body>
+</html>
